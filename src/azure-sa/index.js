@@ -1,3 +1,16 @@
+// Initialize Application Insights FIRST (before any other requires)
+const appInsights = require('applicationinsights');
+appInsights.setup()
+    .setAutoDependencyCorrelation(true)
+    .setAutoCollectRequests(true)
+    .setAutoCollectPerformance(true, true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectDependencies(true)
+    .setAutoCollectConsole(true, false)
+    .setUseDiskRetryCaching(true)
+    .setSendLiveMetrics(true)
+    .start();
+
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
