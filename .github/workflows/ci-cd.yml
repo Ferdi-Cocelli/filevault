@@ -43,15 +43,8 @@ jobs:
         run: npm test
         continue-on-error: true
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+      # SonarCloud automatic analysis is enabled, so no manual scan needed
+      # View results at: https://sonarcloud.io/project/overview?id=Ferdi-Cocelli_filevault
 
   # Terraform Validation and Plan
   terraform-check:
