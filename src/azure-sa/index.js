@@ -66,16 +66,25 @@ app.post('/upload', upload.single('file'), async (req, res) => {
             const blobName = req.file.filename;
             const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
+            console.log(`Uploading file: ${blobName} to container: ${process.env.AZURE_CONTAINER_NAME}`);
             await blockBlobClient.uploadFile(req.file.path);
             fs.unlinkSync(req.file.path); // remove the file locally after upload
 
             files.push({ name: fileName, key: blobName });
             saveFilesData(files);
 
+            console.log(`File uploaded successfully: ${blobName}`);
             res.status(200).send('File uploaded successfully.');
         } catch (err) {
             console.error('Error uploading file:', err);
-            res.status(500).send('Failed to upload file.');
+            console.error('Error details:', {
+                message: err.message,
+                code: err.code,
+                statusCode: err.statusCode,
+                storageAccount: process.env.AZURE_STORAGE_ACCOUNT_NAME,
+                container: process.env.AZURE_CONTAINER_NAME
+            });
+            res.status(500).send(`Failed to upload file: ${err.message}`);
         }
     } else {
         res.status(400).send('No file uploaded.');
@@ -91,15 +100,23 @@ app.delete('/files/:key', async (req, res) => {
 
     try {
         const blockBlobClient = containerClient.getBlockBlobClient(fileKey);
+        console.log(`Deleting file: ${fileKey} from container: ${process.env.AZURE_CONTAINER_NAME}`);
         await blockBlobClient.delete();
 
         files = files.filter(file => file.key !== fileKey);
         saveFilesData(files);
 
+        console.log(`File deleted successfully: ${fileKey}`);
         res.status(200).send('File deleted successfully.');
     } catch (err) {
         console.error('Error deleting file:', err);
-        res.status(500).send('Failed to delete file.');
+        console.error('Error details:', {
+            message: err.message,
+            code: err.code,
+            statusCode: err.statusCode,
+            blobName: fileKey
+        });
+        res.status(500).send(`Failed to delete file: ${err.message}`);
     }
 });
 

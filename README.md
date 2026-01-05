@@ -154,6 +154,99 @@ Open your browser and navigate to `http://localhost:3000`.
 - AWS S3 or Azure Storage Accounts
 - HTML, CSS, JavaScript
 
+## Infrastructure as Code (Terraform)
+
+FileVault uses Terraform to provision and manage Azure infrastructure. All infrastructure configuration is located in the `terraform/` directory.
+
+### Quick Start with Terraform
+
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+See [terraform/README.md](terraform/README.md) for detailed documentation.
+
+### Resources Managed
+
+- Azure Resource Group
+- Azure Storage Account & Container
+- Azure App Service Plan & Web App
+- Application Insights
+
+## Code Quality & Security (SonarQube)
+
+FileVault integrates with SonarQube/SonarCloud for continuous code quality and security analysis.
+
+### Local SonarQube Analysis
+
+1. Install SonarQube Scanner:
+   ```bash
+   npm install -g sonarqube-scanner
+   ```
+
+2. Run analysis:
+   ```bash
+   cd src/azure-sa
+   npm run sonar
+   ```
+
+### SonarCloud Integration
+
+Configure the following secrets in GitHub:
+- `SONAR_TOKEN` - Your SonarCloud token
+- `SONAR_PROJECT_KEY` - Your project key
+- `SONAR_ORGANIZATION` - Your organization name
+
+## CI/CD Pipeline
+
+FileVault includes a comprehensive GitHub Actions workflow (`.github/workflows/ci-cd.yml`) that:
+
+1. **Code Quality Checks**
+   - Linting with ESLint
+   - Unit tests with Jest
+   - SonarCloud security & quality analysis
+
+2. **Terraform Validation**
+   - Format checking
+   - Configuration validation
+   - Plan generation for PRs
+
+3. **Automated Deployment**
+   - Build and package application
+   - Deploy to Azure App Service
+   - Automatic restart
+
+### Required GitHub Secrets
+
+- `AZURE_CREDENTIALS` - Azure service principal credentials
+- `SONAR_TOKEN` - SonarCloud authentication token
+- `SONAR_PROJECT_KEY` - SonarCloud project identifier
+- `SONAR_ORGANIZATION` - SonarCloud organization name
+
+### Setting up Azure Credentials
+
+```bash
+az ad sp create-for-rbac --name "filevault-github-actions" \
+  --role contributor \
+  --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/woc-deployment-rg \
+  --sdk-auth
+```
+
+Copy the JSON output and add it as `AZURE_CREDENTIALS` secret in GitHub.
+
+## Monitoring & Application Insights
+
+FileVault includes Application Insights integration for:
+- Real-time performance monitoring
+- Request/dependency tracking
+- Exception logging
+- Custom telemetry
+
+Access metrics at: [Azure Portal > Application Insights](https://portal.azure.com)
+
 ## To-Do
 
 - [ ] **Use a Database for Persistent Data**: Replace the `filesData.json` with a database (e.g., MongoDB, PostgreSQL) to store file metadata persistently.
@@ -163,4 +256,8 @@ Open your browser and navigate to `http://localhost:3000`.
 - [ ] **File Search and Filtering**: Add functionality to search and filter files in the table.
 
 - [ ] **Drag and Drop Upload**: Enhance the upload feature with drag and drop functionality.
+
+- [ ] **Enhanced Testing**: Add integration and E2E tests
+
+- [ ] **Container Registry**: Use Azure Container Registry for Docker images
 

@@ -1,0 +1,17 @@
+# Copy this file to terraform.tfvars and customize as needed
+
+resource_group_name   = "woc-deployment-rg"
+location              = "uksouth"
+storage_account_name  = "wocfilevault"
+container_name        = "firevault-files"
+app_insights_name     = "woc-filevault-app-insights"
+app_service_plan_name = "woc-filevault-plan"
+app_service_name      = "woc-filevault-app"
+app_service_sku       = "B1"
+environment           = "dev"
+
+tags = {
+  Environment = "Development"
+  Project     = "FileVault"
+  ManagedBy   = "Terraform"
+}
